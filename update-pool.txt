@@ -17,7 +17,7 @@ cardano-cli shelley stake-pool registration-certificate \
 --vrf-verification-key-file vrf.vkey \
 --pool-pledge 14000000000 \
 --pool-cost 340000000 \
---pool-margin 0.02 \
+--pool-margin 0.019 \
 --pool-reward-account-verification-key-file stake.vkey \
 --pool-owner-stake-verification-key-file stake.vkey \
 --mainnet \
