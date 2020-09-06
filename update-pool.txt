@@ -8,6 +8,7 @@ cardano-cli shelley stake-pool metadata-hash --pool-metadata-file pool_Metadata.
 
 
 ##################################################################################
+//air-gapped offline machine//
 Update the below registration-certificate
 ##################################################################################
 
@@ -32,6 +33,7 @@ cardano-cli shelley stake-pool registration-certificate \
 
 
 ##################################################################################
+//air-gapped offline machine//
 To honor your pledge, create a delegation certificate:
 ##################################################################################
 
@@ -97,7 +99,16 @@ cardano-cli shelley transaction build-raw \
     --out-file tx.tmp
 
 
+##################################################################################
+Get protocol parameters
+##################################################################################
+
+cardano-cli shelley query protocol-parameters \
+  --mainnet \
+  --out-file protocol.json
 	
+
+
 ##################################################################################
 Calculate the minimum fee:
 ##################################################################################
@@ -109,14 +120,14 @@ fee=$(cardano-cli shelley transaction calculate-min-fee \
     --mainnet \
     --witness-count 1 \
     --byron-witness-count 0 \
-    --protocol-params-file params.json | awk '{ print $1 }')
+    --protocol-params-file protocol.json | awk '{ print $1 }')
 echo fee: $fee
 
 
 
 
 ##################################################################################
-
+Calculate your change output.
 ##################################################################################
 
 txOut=$((${total_balance}-${fee}))
@@ -126,7 +137,7 @@ echo txOut: ${txOut}
 
 
 ##################################################################################
-
+Build the transaction. 
 ##################################################################################
 
 cardano-cli shelley transaction build-raw \
@@ -142,3 +153,24 @@ cardano-cli shelley transaction build-raw \
 
 
 ##################################################################################
+//air-gapped offline machine//
+Sign the transaction.
+##################################################################################
+
+cardano-cli shelley transaction sign \
+    --tx-body-file tx.raw \
+    --signing-key-file payment.skey \
+    --signing-key-file stake.skey \
+    --signing-key-file cold.skey \
+    --mainnet \
+    --out-file tx.signed
+
+
+
+##################################################################################
+Send the transaction.
+##################################################################################
+
+cardano-cli shelley transaction submit \
+    --tx-file tx.signed \
+    --mainnet
