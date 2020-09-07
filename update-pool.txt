@@ -13,21 +13,21 @@ Update the below registration-certificate
 ##################################################################################
 
 cardano-cli shelley stake-pool registration-certificate \
---cold-verification-key-file cold.vkey \
---vrf-verification-key-file vrf.vkey \
+--cold-verification-key-file ~pool-keys/cold.vkey \
+--vrf-verification-key-file ~pool-keys/vrf.vkey \
 --pool-pledge 14000000000 \
 --pool-cost 340000000 \
 --pool-margin 0.019 \
---pool-reward-account-verification-key-file stake.vkey \
---pool-owner-stake-verification-key-file stake.vkey \
+--pool-reward-account-verification-key-file ~pool-keys/stake.vkey \
+--pool-owner-stake-verification-key-file ~pool-keys/stake.vkey \
 --mainnet \
 --pool-relay-ipv4 35.209.162.106 \
 --pool-relay-port 3001 \
 --pool-relay-ipv4 35.212.194.192 \
 --pool-relay-port 3001 \
 --metadata-url https://git.io/JUOYX \
---metadata-hash $(cat pool_MetadataHash.txt) \
---out-file pool-registration.cert
+--metadata-hash $(cat ~pool-keys/data/pool_MetadataHash.txt) \
+--out-file ~pool-keys/data/pool-registration.cert
 
 
 
@@ -38,9 +38,9 @@ To honor your pledge, create a delegation certificate:
 ##################################################################################
 
 cardano-cli shelley stake-address delegation-certificate \
---stake-verification-key-file stake.vkey \
---cold-verification-key-file cold.vkey \
---out-file delegation.cert
+--stake-verification-key-file ~pool-keys/stake.vkey \
+--cold-verification-key-file ~pool-keys/cold.vkey \
+--out-file ~pool-keys/data/delegation.cert
 
 
 
@@ -60,7 +60,7 @@ Find your balance and UTXOs.
 ##################################################################################
 
 cardano-cli shelley query utxo \
-    --address $(cat payment.addr) \
+    --address $(cat ~/pool-keys/payment.addr) \
     --mainnet > fullUtxo.out
 
 tail -n +3 fullUtxo.out | sort -k3 -nr > balance.out
@@ -91,12 +91,12 @@ Draft the transaction
 
 cardano-cli shelley transaction build-raw \
     ${tx_in} \
-    --tx-out $(cat payment.addr)+${total_balance} \
+    --tx-out $(cat ~/pool-keys/payment.addr)+${total_balance} \
     --ttl $(( ${currentSlot} + 10000)) \
     --fee 0 \
-    --certificate-file pool-registration.cert \
-    --certificate-file delegation.cert \
-    --out-file tx.tmp
+    --certificate-file ~/pool-keys/data/pool-registration.cert \
+    --certificate-file ~/pool-keys/data/delegation.cert \
+    --out-file ~/pool-keys/data/tx.tmp
 
 
 ##################################################################################
@@ -105,7 +105,7 @@ Get protocol parameters
 
 cardano-cli shelley query protocol-parameters \
   --mainnet \
-  --out-file protocol.json
+  --out-file ~/pool-keys/data/protocol.json
 	
 
 
@@ -114,13 +114,13 @@ Calculate the minimum fee:
 ##################################################################################
 
 fee=$(cardano-cli shelley transaction calculate-min-fee \
-    --tx-body-file tx.tmp \
+    --tx-body-file ~/pool-keys/data/tx.tmp \
     --tx-in-count ${txcnt} \
     --tx-out-count 1 \
     --mainnet \
     --witness-count 1 \
     --byron-witness-count 0 \
-    --protocol-params-file protocol.json | awk '{ print $1 }')
+    --protocol-params-file ~/pool-keys/data/protocol.json | awk '{ print $1 }')
 echo fee: $fee
 
 
@@ -142,12 +142,12 @@ Build the transaction.
 
 cardano-cli shelley transaction build-raw \
     ${tx_in} \
-    --tx-out $(cat payment.addr)+${txOut} \
+    --tx-out $(cat ~/pool-keys/payment.addr)+${txOut} \
     --ttl $(( ${currentSlot} + 10000)) \
     --fee ${fee} \
-    --certificate-file pool-registration.cert \
-    --certificate-file delegation.cert \
-    --out-file tx.raw
+    --certificate-file ~/pool-keys/data/pool-registration.cert \
+    --certificate-file ~/pool-keys/data/delegation.cert \
+    --out-file ~/pool-keys/data/tx.raw
 
 
 
@@ -158,12 +158,12 @@ Sign the transaction.
 ##################################################################################
 
 cardano-cli shelley transaction sign \
-    --tx-body-file tx.raw \
-    --signing-key-file payment.skey \
-    --signing-key-file stake.skey \
-    --signing-key-file cold.skey \
+    --tx-body-file ~/pool-keys/data/tx.raw \
+    --signing-key-file ~/pool-keys/payment.skey \
+    --signing-key-file ~/pool-keys/stake.skey \
+    --signing-key-file ~/pool-keys/cold.skey \
     --mainnet \
-    --out-file tx.signed
+    --out-file ~/pool-keys/data/tx.signed
 
 
 
@@ -172,5 +172,7 @@ Send the transaction.
 ##################################################################################
 
 cardano-cli shelley transaction submit \
-    --tx-file tx.signed \
+    --tx-file ~/pool-keys/data/tx.signed \
     --mainnet
+
+cardano-cli shelley query ledger-state --mainnet | grep publicKey | grep pool19ut4284xy9p82dd0cglzxweddfqw73yennkjk6mmp650chnr6lz
