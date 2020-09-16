@@ -13,21 +13,21 @@ Update the below registration-certificate
 ##################################################################################
 
 cardano-cli shelley stake-pool registration-certificate \
---cold-verification-key-file ~pool-keys/cold.vkey \
---vrf-verification-key-file ~pool-keys/vrf.vkey \
+--cold-verification-key-file ~/pool-keys/cold.vkey \
+--vrf-verification-key-file ~/pool-keys/vrf.vkey \
 --pool-pledge 14000000000 \
 --pool-cost 340000000 \
 --pool-margin 0.019 \
---pool-reward-account-verification-key-file ~pool-keys/stake.vkey \
---pool-owner-stake-verification-key-file ~pool-keys/stake.vkey \
+--pool-reward-account-verification-key-file ~/pool-keys/stake.vkey \
+--pool-owner-stake-verification-key-file ~/pool-keys/stake.vkey \
 --mainnet \
 --pool-relay-ipv4 35.209.162.106 \
 --pool-relay-port 3001 \
 --pool-relay-ipv4 35.212.194.192 \
 --pool-relay-port 3001 \
 --metadata-url https://git.io/JURL1 \
---metadata-hash $(cat ~pool-keys/data/pool_MetadataHash.txt) \
---out-file ~pool-keys/data/pool-registration.cert
+--metadata-hash $(cat ~/pool-keys/data/pool_MetadataHash.txt) \
+--out-file ~/pool-keys/data/pool-registration.cert
 
 
 
