@@ -38,9 +38,9 @@ To honor your pledge, create a delegation certificate:
 ##################################################################################
 
 cardano-cli shelley stake-address delegation-certificate \
---stake-verification-key-file ~pool-keys/stake.vkey \
---cold-verification-key-file ~pool-keys/cold.vkey \
---out-file ~pool-keys/data/delegation.cert
+--stake-verification-key-file ~/pool-keys/stake.vkey \
+--cold-verification-key-file ~/pool-keys/cold.vkey \
+--out-file ~/pool-keys/data/delegation.cert
 
 
 
