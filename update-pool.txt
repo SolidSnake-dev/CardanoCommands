@@ -2,7 +2,7 @@
 calculate the hash of your metadata file
 ##################################################################################
 
-cardano-cli shelley stake-pool metadata-hash --pool-metadata-file pool_Metadata.json > pool_MetadataHash.txt
+cardano-cli shelley stake-pool metadata-hash --pool-metadata-file ~/pool-keys/data/pool_Metadata.json > pool_MetadataHash.txt
 
 
 
@@ -25,7 +25,7 @@ cardano-cli shelley stake-pool registration-certificate \
 --pool-relay-port 3001 \
 --pool-relay-ipv4 35.212.194.192 \
 --pool-relay-port 3001 \
---metadata-url https://git.io/JURL1 \
+--metadata-url https://git.io/JUieB \
 --metadata-hash $(cat ~/pool-keys/data/pool_MetadataHash.txt) \
 --out-file ~/pool-keys/data/pool-registration.cert
 
