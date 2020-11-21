@@ -61,11 +61,11 @@ Find your balance and UTXOs.
 
 cardano-cli shelley query utxo \
     --address $(cat ~/pool-keys/payment.addr) \
-    --mainnet > fullUtxo.out
+    --mainnet > ~/pool-keys/data/fullUtxo.out
 
-tail -n +3 fullUtxo.out | sort -k3 -nr > balance.out
+tail -n +3 ~/pool-keys/data/fullUtxo.out | sort -k3 -nr > ~/pool-keys/data/balance.out
 
-cat balance.out
+cat ~/pool-keys/data/balance.out
 
 tx_in=""
 total_balance=0
