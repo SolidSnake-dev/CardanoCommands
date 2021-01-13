@@ -2,7 +2,7 @@
 calculate the hash of your metadata file
 ##################################################################################
 
-cardano-cli shelley stake-pool metadata-hash --pool-metadata-file ~/pool-keys/data/pool_Metadata.json > pool_MetadataHash.txt
+cardano-cli stake-pool metadata-hash --pool-metadata-file ~/pool-keys/data/pool_Metadata.json > pool_MetadataHash.txt
 
 
 
@@ -12,10 +12,10 @@ cardano-cli shelley stake-pool metadata-hash --pool-metadata-file ~/pool-keys/da
 Update the below registration-certificate
 ##################################################################################
 
-cardano-cli shelley stake-pool registration-certificate \
+cardano-cli stake-pool registration-certificate \
 --cold-verification-key-file ~/pool-keys/cold.vkey \
 --vrf-verification-key-file ~/pool-keys/vrf.vkey \
---pool-pledge 14000000000 \
+--pool-pledge 100000000000 \
 --pool-cost 340000000 \
 --pool-margin 0.019 \
 --pool-reward-account-verification-key-file ~/pool-keys/stake.vkey \
@@ -37,7 +37,7 @@ cardano-cli shelley stake-pool registration-certificate \
 To honor your pledge, create a delegation certificate:
 ##################################################################################
 
-cardano-cli shelley stake-address delegation-certificate \
+cardano-cli stake-address delegation-certificate \
 --stake-verification-key-file ~/pool-keys/stake.vkey \
 --cold-verification-key-file ~/pool-keys/cold.vkey \
 --out-file ~/pool-keys/data/delegation.cert
@@ -49,7 +49,7 @@ cardano-cli shelley stake-address delegation-certificate \
 find the tip of the blockchain
 ##################################################################################
 
-currentSlot=$(cardano-cli shelley query tip --mainnet | jq -r '.slotNo')
+currentSlot=$(cardano-cli query tip --mainnet | jq -r '.slotNo')
 echo Current Slot: $currentSlot
 
 
@@ -59,8 +59,9 @@ echo Current Slot: $currentSlot
 Find your balance and UTXOs.
 ##################################################################################
 
-cardano-cli shelley query utxo \
+cardano-cli query utxo \
     --address $(cat ~/pool-keys/payment.addr) \
+    --allegra-era \
     --mainnet > ~/pool-keys/data/fullUtxo.out
 
 tail -n +3 ~/pool-keys/data/fullUtxo.out | sort -k3 -nr > ~/pool-keys/data/balance.out
@@ -89,13 +90,14 @@ echo Number of UTXOs: ${txcnt}
 Draft the transaction
 ##################################################################################
 
-cardano-cli shelley transaction build-raw \
+cardano-cli transaction build-raw \
     ${tx_in} \
     --tx-out $(cat ~/pool-keys/payment.addr)+${total_balance} \
-    --ttl $(( ${currentSlot} + 10000)) \
+    --invalid-hereafter $(( ${currentSlot} + 10000)) \
     --fee 0 \
     --certificate-file ~/pool-keys/data/pool-registration.cert \
     --certificate-file ~/pool-keys/data/delegation.cert \
+    --allegra-era \
     --out-file ~/pool-keys/data/tx.tmp
 
 
@@ -105,6 +107,7 @@ Get protocol parameters
 
 cardano-cli shelley query protocol-parameters \
   --mainnet \
+  --allegra-era \
   --out-file ~/pool-keys/data/protocol.json
 	
 
@@ -113,7 +116,7 @@ cardano-cli shelley query protocol-parameters \
 Calculate the minimum fee:
 ##################################################################################
 
-fee=$(cardano-cli shelley transaction calculate-min-fee \
+fee=$(cardano-cli transaction calculate-min-fee \
     --tx-body-file ~/pool-keys/data/tx.tmp \
     --tx-in-count ${txcnt} \
     --tx-out-count 1 \
@@ -143,10 +146,11 @@ Build the transaction.
 cardano-cli shelley transaction build-raw \
     ${tx_in} \
     --tx-out $(cat ~/pool-keys/payment.addr)+${txOut} \
-    --ttl $(( ${currentSlot} + 10000)) \
+    --invalid-hereafter $(( ${currentSlot} + 10000)) \
     --fee ${fee} \
     --certificate-file ~/pool-keys/data/pool-registration.cert \
     --certificate-file ~/pool-keys/data/delegation.cert \
+    --allegra-era \
     --out-file ~/pool-keys/data/tx.raw
 
 
@@ -157,7 +161,7 @@ cardano-cli shelley transaction build-raw \
 Sign the transaction.
 ##################################################################################
 
-cardano-cli shelley transaction sign \
+cardano-cli transaction sign \
     --tx-body-file ~/pool-keys/data/tx.raw \
     --signing-key-file ~/pool-keys/payment.skey \
     --signing-key-file ~/pool-keys/stake.skey \
