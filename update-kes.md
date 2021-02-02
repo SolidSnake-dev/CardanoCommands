@@ -33,16 +33,5 @@ cardano-cli node issue-op-cert \
 --kes-period 99 \
 --out-file $POOLKEYS/data/node.cert
 
+chmod a-rwx POOLKEYS
 
-cd $NODE_HOME
-
-chmod u+rwx $HOME/cold-keys
-
-cardano-cli node issue-op-cert \
-    --kes-verification-key-file kes.vkey \
-    --cold-signing-key-file $HOME/cold-keys/node.skey \
-    --operational-certificate-issue-counter $HOME/cold-keys/node.counter \
-    --kes-period <startKesPeriod> \
-    --out-file node.cert
- 
-chmod a-rwx $HOME/cold-keys
