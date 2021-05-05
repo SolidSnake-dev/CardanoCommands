@@ -2,7 +2,7 @@
 
 NODE_HOME=/home/blockproducing/cardano-node
 
-slotNo=$(cardano-cli query tip --mainnet | jq -r '.slotNo')
+slotNo=$(cardano-cli query tip --mainnet | jq -r '.slot')
 
 slotsPerKESPeriod=$(cat $NODE_HOME/block-producing/mainnet-shelley-genesis.json | jq -r '.slotsPerKESPeriod')
 
