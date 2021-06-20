@@ -49,7 +49,7 @@ cardano-cli stake-address delegation-certificate \
 find the tip of the blockchain
 ##################################################################################
 
-currentSlot=$(cardano-cli query tip --mainnet | jq -r '.slotNo')
+currentSlot=$(cardano-cli query tip --mainnet | jq -r '.slot')
 echo Current Slot: $currentSlot
 
 
@@ -97,7 +97,6 @@ cardano-cli transaction build-raw \
     --fee 0 \
     --certificate-file ~/pool-keys/data/pool-registration.cert \
     --certificate-file ~/pool-keys/data/delegation.cert \
-    --allegra-era \
     --out-file ~/pool-keys/data/tx.tmp
 
 
@@ -107,7 +106,6 @@ Get protocol parameters
 
 cardano-cli shelley query protocol-parameters \
   --mainnet \
-  --allegra-era \
   --out-file ~/pool-keys/data/protocol.json
 	
 
@@ -150,7 +148,6 @@ cardano-cli shelley transaction build-raw \
     --fee ${fee} \
     --certificate-file ~/pool-keys/data/pool-registration.cert \
     --certificate-file ~/pool-keys/data/delegation.cert \
-    --allegra-era \
     --out-file ~/pool-keys/data/tx.raw
 
 
