@@ -103,7 +103,7 @@ cardano-cli transaction build-raw \
 Get protocol parameters
 ##################################################################################
 
-cardano-cli shelley query protocol-parameters \
+cardano-cli query protocol-parameters \
   --mainnet \
   --out-file ~/pool-keys/data/protocol.json
 	
@@ -140,7 +140,7 @@ echo txOut: ${txOut}
 Build the transaction. 
 ##################################################################################
 
-cardano-cli shelley transaction build-raw \
+cardano-cli transaction build-raw \
     ${tx_in} \
     --tx-out $(cat ~/pool-keys/payment.addr)+${txOut} \
     --invalid-hereafter $(( ${currentSlot} + 10000)) \
@@ -171,8 +171,8 @@ cardano-cli transaction sign \
 Send the transaction.
 ##################################################################################
 
-cardano-cli shelley transaction submit \
+cardano-cli transaction submit \
     --tx-file ~/pool-keys/data/tx.signed \
     --mainnet
 
-cardano-cli shelley query ledger-state --mainnet | grep publicKey | grep pool19ut4284xy9p82dd0cglzxweddfqw73yennkjk6mmp650chnr6lz
+cardano-cli query ledger-state --mainnet | grep publicKey | grep pool19ut4284xy9p82dd0cglzxweddfqw73yennkjk6mmp650chnr6lz
