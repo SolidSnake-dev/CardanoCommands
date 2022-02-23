@@ -10,3 +10,6 @@ https://github.com/solidsnakedev/cardano_commands/wiki/Update-KES-Keys
 
 ## Update Pool
 https://github.com/solidsnakedev/cardano_commands/wiki/Update-Pool
+
+## Setup Grafana
+https://github.com/solidsnakedev/cardano_commands/wiki/Grafana
