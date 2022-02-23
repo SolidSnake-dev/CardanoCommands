@@ -7,3 +7,6 @@ https://github.com/solidsnakedev/cardano_commands/wiki/Set-up-pool
 
 ## Update KES Keys
 https://github.com/solidsnakedev/cardano_commands/wiki/Update-KES-Keys
+
+## Update Pool
+https://github.com/solidsnakedev/cardano_commands/wiki/Update-Pool
