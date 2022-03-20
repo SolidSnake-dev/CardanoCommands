@@ -13,3 +13,7 @@ https://github.com/solidsnakedev/cardano_commands/wiki/Update-Pool
 
 ## Setup Grafana
 https://github.com/solidsnakedev/cardano_commands/wiki/Grafana
+
+
+## get produced slot
+grep <slot when you produced> /var/log/syslog
